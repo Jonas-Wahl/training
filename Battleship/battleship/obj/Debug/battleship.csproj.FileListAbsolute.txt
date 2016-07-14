@@ -1,0 +1,6 @@
+C:\Users\jwa\Desktop\c#_training\Battleship\battleship\bin\Debug\battleship.exe.config
+C:\Users\jwa\Desktop\c#_training\Battleship\battleship\bin\Debug\battleship.exe
+C:\Users\jwa\Desktop\c#_training\Battleship\battleship\bin\Debug\battleship.pdb
+C:\Users\jwa\Desktop\c#_training\Battleship\battleship\obj\Debug\battleship.csprojResolveAssemblyReference.cache
+C:\Users\jwa\Desktop\c#_training\Battleship\battleship\obj\Debug\battleship.exe
+C:\Users\jwa\Desktop\c#_training\Battleship\battleship\obj\Debug\battleship.pdb
