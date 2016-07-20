@@ -8,18 +8,7 @@ namespace Battleship
 {
     class Program
     {
-        public static void print(int x,int y, char[,] pitch)
-        {
-            for (int i = 0; i < x; i++)
-            {
-                for (int i2 = 0; i2 < y; i2++)
-                {
-                    Console.Write("{0}", pitch[i, i2]);
-                }
-                Console.WriteLine("");
-            }
-        }
-        public static void createOpponenPitch(int x, int y, char[,] ships)
+        public static void createOpponentPitch(int x, int y, char[,] ships)
         {
             Random rand = new Random();
             int ir;
@@ -39,6 +28,7 @@ namespace Battleship
                 }
             }
         }
+
         public static void createOwnPitch(int x, int y, char[,] pitch)
         {
             for (int i = 0; i < x; i++)
@@ -55,6 +45,7 @@ namespace Battleship
             if(ships[posx,posy] == 's')
             {
                 pitch[posx, posy] = 'x';
+                ships[posx, posy] = '.';
             }
             else
             {
@@ -62,42 +53,147 @@ namespace Battleship
             }
         }
 
-        public static void getPosition(int x, int y, char[,] pitch, ref int xpos, ref int ypos)
+        public static bool getPosition(int x, int y, char[,] pitch, ref int xpos, ref int ypos, int remainingShips)
         {
-            ConsoleKeyInfo key = new ConsoleKeyInfo();
-            do
+            ConsoleKeyInfo input = new ConsoleKeyInfo();
+            bool moved = true;
+            input = Console.ReadKey();
+            switch (input.Key)
             {
-                switch (key.Key)
-                {
-                    case: ConsoleKey.UpArrow
+                case ConsoleKey.UpArrow:
+                    if (xpos == 0)
+                    {
+                        xpos = x - 1;
+                    }
+                    else
+                    {
+                        xpos--;
+                    }
+                    if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
+                    {
+                        xpos--;
+                    }
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (xpos == x-1)
+                    {
+                        xpos = 0;
+                    }
+                    else
+                    {
+                        xpos++;
+                    }
+                    if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
+                    {
+                        xpos++;
+                    }
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (ypos == y - 1)
+                    {
+                        ypos = 0;
+                    }
+                    else
+                    {
+                        ypos++;
+                    }
+                    if(pitch[xpos,ypos] == 'x' || pitch[xpos, ypos] == 'o')
+                    {
+                        ypos++;
+                    }
+                    break;
+                case ConsoleKey.LeftArrow:
+                    if (ypos == 0)
+                    {
+                        ypos = y - 1;
+                    }
+                    else
+                    {
+                        ypos--;
+                    }
+                    if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
+                    {
+                        ypos--;
+                    }
+                    break;
+                case ConsoleKey.Enter:
+                    moved = false;
+                    break;
+            }
+            return moved;
+        }
 
-                        break;
+        public static void printMarkedPosition(int x, int y, char[,] pitch, int xpos, int ypos, int remainingShips, int remainingMoves)
+        {
+            for (int i = 0; i < x; i++)
+            {
+                for (int i2 = 0; i2 < y; i2++)
+                {
+                    if (i == xpos && i2 == ypos)
+                    {
+                        Console.Write("_");
+                    }
+                    else
+                    {
+                        Console.Write("{0}", pitch[i, i2]);
+                    }
                 }
-            } while (key.Key != ConsoleKey.Enter);
+                Console.WriteLine("");
+            }
+            Console.WriteLine("Verbleibende Schiffe: {0}",remainingShips);
+            Console.WriteLine("Verbleibende Züge: {0}", remainingMoves);
+        }
+
+        public static void countShips(int x, int y, char[,] ships, out int count)
+        {
+            count = 0;
+            for (int i = 0; i < x; i++)
+            {
+                for (int i2 = 0; i2 < y; i2++)
+                {
+                    if(ships[i,i2] == 's')
+                    {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        public static int calculateMoves(int executedMoves, int maxMoves)
+        {
+            return maxMoves - executedMoves;
         }
 
         static void Main(string[] args)
         {
             int x = 10;
             int y = 20;
-            char[,] pitch = new char[x,y];
+            char[,] pitch = new char[x, y];
             char[,] ships = new char[x, y];
-            bool won = false;
-            int move = 0;
-            
+            int remainingShips;
+            int executedMoves = 0;
+            int remainingMoves = 0;
+            int maxMoves = 50;
+            int xpos = 0;
+            int ypos = 0;
+
             // create opponent
-            createOpponenPitch(x, y, ships);
+            createOpponentPitch(x, y, ships);
 
             // create pitch
-            createOpponenPitch(x, y, pitch);
+            createOwnPitch(x, y, pitch);
             do
             {
-                move++;
-                print(x, y, pitch);
-                Console.WriteLine("");
-                
-                print(x, y, ships);
-            } while (move < 20 && !won);
+                countShips(x, y, ships, out remainingShips);
+                Console.Clear();
+                remainingMoves = calculateMoves(executedMoves, maxMoves);
+                printMarkedPosition(x, y, pitch, xpos, ypos, remainingShips, remainingMoves);
+                if (!getPosition(x, y, pitch, ref xpos, ref ypos, remainingShips)) {
+                    executedMoves++;
+                    shoot(x, y, pitch, ships, xpos, ypos);
+                    remainingMoves = calculateMoves(executedMoves, maxMoves);
+                }
+            } while (remainingMoves > 0 && remainingShips > 0);
             // pause console
             Console.ReadLine();
         }
