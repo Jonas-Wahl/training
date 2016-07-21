@@ -53,6 +53,85 @@ namespace Battleship
             }
         }
 
+        public static void moveUp(int x, int y, char[,] pitch, ref int xpos, ref int ypos, int counter )
+        {
+            if (xpos == 0)
+            {
+                xpos = x - 1;
+            }
+            else
+            {
+                xpos--;
+            }
+            if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
+            {
+                counter++;
+                if (counter <= x )
+                {
+                    moveUp(x, y, pitch, ref xpos, ref ypos, counter);
+                }
+            }
+        }
+
+        public static void moveDown(int x, int y, char[,] pitch, ref int xpos, ref int ypos, int counter)
+        {
+            if (xpos == x - 1)
+            {
+                xpos = 0;
+            }
+            else
+            {
+                xpos++;
+            }
+            if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
+            {
+                counter++;
+                if (counter <= x)
+                {
+                    moveDown(x, y, pitch, ref xpos, ref ypos, counter);
+                }
+            }
+        }
+
+        public static void moveRight(int x, int y, char[,] pitch, ref int xpos, ref int ypos, int counter)
+        {
+            if (ypos == y - 1)
+            {
+                ypos = 0;
+            }
+            else
+            {
+                ypos++;
+            }
+            if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
+            {
+                if (counter <= x)
+                {
+                    moveRight(x, y, pitch, ref xpos, ref ypos, counter);
+                }
+            }
+        }
+
+        public static void moveLeft(int x, int y, char[,] pitch, ref int xpos, ref int ypos, int counter)
+        {
+            if (ypos == 0)
+            {
+                ypos = y - 1;
+            }
+            else
+            {
+                ypos--;
+            }
+            if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
+            {
+                counter++;
+                if (counter <= x)
+                {
+                    moveLeft(x, y, pitch, ref xpos, ref ypos, counter);
+                }
+            }
+        }
+
         public static bool getPosition(int x, int y, char[,] pitch, ref int xpos, ref int ypos, int remainingShips)
         {
             ConsoleKeyInfo input = new ConsoleKeyInfo();
@@ -61,60 +140,16 @@ namespace Battleship
             switch (input.Key)
             {
                 case ConsoleKey.UpArrow:
-                    if (xpos == 0)
-                    {
-                        xpos = x - 1;
-                    }
-                    else
-                    {
-                        xpos--;
-                    }
-                    if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
-                    {
-                        xpos--;
-                    }
+                    moveUp(x, y, pitch, ref xpos, ref ypos, 0);
                     break;
                 case ConsoleKey.DownArrow:
-                    if (xpos == x-1)
-                    {
-                        xpos = 0;
-                    }
-                    else
-                    {
-                        xpos++;
-                    }
-                    if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
-                    {
-                        xpos++;
-                    }
+                    moveDown(x, y, pitch, ref xpos, ref ypos, 0);
                     break;
                 case ConsoleKey.RightArrow:
-                    if (ypos == y - 1)
-                    {
-                        ypos = 0;
-                    }
-                    else
-                    {
-                        ypos++;
-                    }
-                    if(pitch[xpos,ypos] == 'x' || pitch[xpos, ypos] == 'o')
-                    {
-                        ypos++;
-                    }
+                    moveRight(x, y, pitch, ref xpos, ref ypos, 0);
                     break;
                 case ConsoleKey.LeftArrow:
-                    if (ypos == 0)
-                    {
-                        ypos = y - 1;
-                    }
-                    else
-                    {
-                        ypos--;
-                    }
-                    if (pitch[xpos, ypos] == 'x' || pitch[xpos, ypos] == 'o')
-                    {
-                        ypos--;
-                    }
+                    moveLeft(x, y, pitch, ref xpos, ref ypos, 0);
                     break;
                 case ConsoleKey.Enter:
                     moved = false;
